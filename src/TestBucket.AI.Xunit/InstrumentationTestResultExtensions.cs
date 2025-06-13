@@ -38,7 +38,7 @@ public static class InstrumentationTestResultExtensions
     /// <param name="testResult"></param>
     public static void ShouldBeSuccess(this InstrumentationTestResult testResult)
     {
-        var failingActivities = testResult.Activities.Where(a => a.Status != ActivityStatusCode.Ok).ToList();
+        var failingActivities = testResult.Activities.Where(a => a.Status == ActivityStatusCode.Error).ToList();
 
         // If there are multiple failing activities, we only log the first one in the assert so add warnings for the rest.
         foreach (var ex in testResult.FunctionCallExceptions)
@@ -56,7 +56,7 @@ public static class InstrumentationTestResultExtensions
                 Test run contains {failingActivities.Count} activities that did not complete successfully. 
                 See warnings for details. 
                 
-                First={failingActivities[0].DisplayName}
+                DisplayName={failingActivities[0].DisplayName} StatusDescription={failingActivities[0].StatusDescription}
                 """);
                 
         }

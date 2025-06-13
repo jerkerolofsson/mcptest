@@ -28,16 +28,15 @@ namespace TestBucket.McpTests.OllamaIntegrationTests
         public async Task CallAddTool_WithTwoTools_CorrectToolIsInvoked(string model)
         {
             // Arrange
-            var chatClient = await Ollama.CreateChatClientAsync(model);
-            List<IAIFunctionAdapter> tools =
-            [
-                new McpServerToolAdapter(Add),
-                new McpServerToolAdapter(Subtract)
-            ];
-
+            var chatClient = await Ollama.CreateChatClientAsync(model, configureTools: (tools) =>
+            {
+                tools.Add(Add);
+                tools.Add(Subtract);
+            });
+           
             // Act
             var message = new ChatMessage(ChatRole.User, "Add 3 and 6");
-            var result = await chatClient.GetResponseAsync([message], tools, cancellationToken: TestContext.Current.CancellationToken);
+            var result = await chatClient.TestGetResponseAsync([message], cancellationToken: TestContext.Current.CancellationToken);
 
             // Assert
             result.ShouldBeSuccess();

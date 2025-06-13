@@ -10,6 +10,7 @@ namespace TestBucket.AI.Xunit.Instrumentation
         private readonly List<FunctionCallContent> _functionCalls = [];
         private readonly List<AIContent> _otherContent = [];
         private readonly List<TextContent> _textContent = [];
+        private readonly List<ChatMessage> _requestMessages = [];
 
         public long? OutputTokenCount { get; set; }
         public long? InputTokenCount { get; set; }
@@ -18,6 +19,7 @@ namespace TestBucket.AI.Xunit.Instrumentation
         public IReadOnlyList<Activity> Activities => _activities.AsReadOnly();
         public IReadOnlyList<FunctionCallContent> FunctionCalls => _functionCalls.AsReadOnly();
         public IReadOnlyList<Exception> FunctionCallExceptions => _exceptions.AsReadOnly();
+        public IReadOnlyList<ChatMessage> RequestMessages => _requestMessages.AsReadOnly();
 
         internal void AddActivity(Activity activity)
         {
@@ -49,6 +51,11 @@ namespace TestBucket.AI.Xunit.Instrumentation
             {
                 _otherContent.Add(content);
             }
+        }
+
+        internal void AddRequestMessages(IEnumerable<ChatMessage> messages)
+        {
+            _requestMessages.AddRange(messages);
         }
 
         internal void AddTextContent(TextContent textContent)

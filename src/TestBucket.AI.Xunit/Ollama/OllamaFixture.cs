@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.DependencyInjection;
 
 using TestBucket.AI.Xunit.Instrumentation;
+using TestBucket.AI.Xunit.Tools;
 
 namespace TestBucket.AI.Xunit.Ollama
 {
@@ -22,12 +24,14 @@ namespace TestBucket.AI.Xunit.Ollama
             await _ollamaContainer.StartAsync(TestContext.Current.CancellationToken);
         }
 
-        public async ValueTask<IChatClient> CreateChatClientAsync(string modelName)
+        public async ValueTask<IChatClient> CreateChatClientAsync(string modelName, 
+            Action<ServiceCollection>? configureServices = null,
+            Action<IToolConfigurator>? configureTools = null)
         {
             _ollamaClient ??= new OllamaApiClient(OllamaUrl, modelName);
             await PullModelAsync(modelName);
 
-            return InstrumentationChatClientFactory.Create(_ollamaClient);
+            return InstrumentationChatClientFactory.Create(_ollamaClient, configureServices, configureTools);
         }
 
         private async ValueTask PullModelAsync(string modelName)

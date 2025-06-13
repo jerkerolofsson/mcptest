@@ -19,19 +19,22 @@ public static class IChatClientWithToolsExtensions
     /// <param name="configureOptions">Callback that allows for additional configuration. Before this method is called the Tools property will be assigned</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async Task<InstrumentationTestResult> GetResponseAsync(
+    public static async Task<InstrumentationTestResult> TestGetResponseAsync(
         this IChatClient chatClient, 
         IEnumerable<ChatMessage> chatMessages, 
-        IList<IAIFunctionAdapter> tools, 
         Action<ChatOptions>? configureOptions = null,
         CancellationToken cancellationToken = default)
     {
-        ChatOptions options = new ChatOptions
-        {
-            Tools = [..tools.Select(x=>x.AIFunction)],
-        };
+        ChatOptions options = new ChatOptions();
 
-        if(configureOptions is not null)
+        var toolConfigurator = chatClient.GetRequiredService<ToolConfigurator>();
+        var functions = toolConfigurator.Build();
+        if (functions != null)
+        {
+            options.Tools = [..functions.Select(x=>x.AIFunction)];
+        }
+
+        if (configureOptions is not null)
         {
             configureOptions(options);
         }

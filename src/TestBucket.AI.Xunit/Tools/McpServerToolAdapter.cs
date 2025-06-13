@@ -15,12 +15,12 @@ public class McpServerToolAdapter : IAIFunctionAdapter
     private readonly DescriptionAttribute? _descriptionAttribute;
 
     private readonly Dictionary<string, object?> _additionalProperties = [];
-    private readonly Delegate _method;
+    private readonly MethodInfo _methodInfo;
 
     /// <summary>
     /// Gets the name of the tool.
     /// </summary>
-    public string Name => _mcpServerToolAttribute?.Name ?? "";
+    public string Name => _mcpServerToolAttribute?.Name ?? _methodInfo.Name;
 
     /// <summary>
     /// Gets a description of the tool, suitable for use in describing the purpose to
@@ -42,10 +42,6 @@ public class McpServerToolAdapter : IAIFunctionAdapter
     {
         var methodInfo = method.Method;
         var serverToolAttribute = methodInfo.GetCustomAttribute<McpServerToolAttribute>();
-        if(serverToolAttribute is null)
-        {
-            //throw new ArgumentException("Expected method to have a McpServerToolAttribute");
-        }
         _mcpServerToolAttribute = serverToolAttribute;
         _descriptionAttribute = methodInfo.GetCustomAttribute<DescriptionAttribute>();
 
@@ -56,7 +52,25 @@ public class McpServerToolAdapter : IAIFunctionAdapter
             Name = _mcpServerToolAttribute?.Name ?? methodInfo.Name,
         };
 
-        _method = method;
-        AIFunction = AIFunctionFactory.Create(_method, options);
+        _methodInfo = methodInfo;
+        AIFunction = AIFunctionFactory.Create(method, options);
+    }
+
+
+    public McpServerToolAdapter(MethodInfo methodInfo, object? target)
+    {
+        var serverToolAttribute = methodInfo.GetCustomAttribute<McpServerToolAttribute>();
+        _mcpServerToolAttribute = serverToolAttribute;
+        _descriptionAttribute = methodInfo.GetCustomAttribute<DescriptionAttribute>();
+
+        var options = new AIFunctionFactoryOptions
+        {
+            AdditionalProperties = _additionalProperties,
+            Description = _descriptionAttribute?.Description,
+            Name = _mcpServerToolAttribute?.Name ?? methodInfo.Name,
+        };
+
+        _methodInfo = methodInfo;
+        AIFunction = AIFunctionFactory.Create(methodInfo, target, options);
     }
 }

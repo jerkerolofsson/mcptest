@@ -40,6 +40,8 @@ namespace TestBucket.AI.Xunit.Instrumentation
             [EnumeratorCancellation]
             CancellationToken cancellationToken = default)
         {
+            LogRequestMessagesToResult(messages);
+
             await foreach(var response in InnerClient.GetStreamingResponseAsync(messages, options, cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -86,6 +88,8 @@ namespace TestBucket.AI.Xunit.Instrumentation
         {
             _activities.Clear();
 
+            LogRequestMessagesToResult(messages);
+
             var response = await InnerClient.GetResponseAsync(messages, options, cancellationToken);
             Inspect(response);
             LogUsageToResult(response);
@@ -96,6 +100,11 @@ namespace TestBucket.AI.Xunit.Instrumentation
             }
 
             return response;
+        }
+
+        private void LogRequestMessagesToResult(IEnumerable<ChatMessage> messages)
+        {
+            _result.AddRequestMessages(messages);
         }
 
         private void LogActivityToResult(Activity activity)

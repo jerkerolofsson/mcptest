@@ -1,7 +1,5 @@
 ﻿using ModelContextProtocol.Protocol;
 
-using Xunit;
-
 namespace TestBucket.AI.Xunit;
 
 public static class CallToolResponseExtensions
