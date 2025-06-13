@@ -1,4 +1,4 @@
-# MCP test extensions for xunit v3
+# MCP and IChatClient test extensions for xunit v3
 
 The `TestBucket.McpTest.Xunit` package provides helpers for writing integration tests related to IChatClient and Model Context Protocol (MCP) servers using xUnit v3. 
 
@@ -8,7 +8,58 @@ Add Package Reference
 
 - Ensure your test project references the following NuGet package: `TestBucket.AI.Xunit`
 
+## Benchmarking models
+
+To benchmark models, you can use the `TestBucket.McpTest.Xunit` package to create tests that measure the performance of different models. 
+The package provides a way to instrument calls to models and record metrics such as the accuracy invoking the correct tools with the correct arguments.
+
+### Benchmarking example without verification of result
+
+```csharp
+foreach (string model in new string[] { "llama3.1:8b", "mistral-nemo:12b" })
+{
+    IChatClient client = ...;
+    var benchmarkResult = await client.BencharkAsync("Add 3 and 6", iterations:2, (iterationResult) =>
+    {
+        iterationResult.ShouldBeSuccess();
+        iterationResult.ContainsFunctionCall("Add");
+    });
+
+    // Write summary
+    TestContext.Current.TestOutputHelper?.WriteLine("Model: {ModelName}, Passrate={Passrate} ({IterationsPassed}/{IterationsStarted})", 
+        model, 
+        benchmarkResult.Passrate, // 0.0 - 100.0
+        benchmarkResult.IterationsPassed,
+        benchmarkResult.IterationsStarted);
+
+    // Write exceptions
+    foreach(var exception in benchmarkResult.Exceptions)
+    {
+        TestContext.Current.TestOutputHelper?.WriteLine(exception.ToString());
+    }
+}
+```
+
+### Benchmarking results in xunit results XML
+
+```xml
+<attachments>
+    <attachment name="AIUserPrompt">
+        <![CDATA[ Add 3 and 6 ]]>
+    </attachment>
+    <attachment name="metric:llama3.1_8b:passrate">
+        <![CDATA[ 100%@1749793857501 ]]>
+    </attachment>
+    <attachment name="metric:mistral-nemo_12b:passrate">
+        <![CDATA[ 100%@1749793862549 ]]>
+    </attachment>
+</attachments>
+```
+
 ## Verifying that the correct tool is called from a user-prompt
+
+When adding new tools to your MCP server, it is possible that the tool selection breaks. The tool selection can be tested by calling TestGetResponseAsync and
+examining the result which will contain information about what tools were called as well as additional diagnostics data.
 
 > This example uses OllamaFixture to create an Ollama test container (using Testcontainers.Ollama)
 
@@ -25,8 +76,7 @@ public class CalculatorToolTests(OllamaFixture Ollama) : IClassFixture<OllamaFix
         IChatClient chatClient = await CreateInstrumentedChatClientAsync(model);
 
         // Act
-        var message = new ChatMessage(ChatRole.User, "Subtract 5 from 19");
-        var result = await chatClient.TestGetResponseAsync([message], cancellationToken: TestContext.Current.CancellationToken);
+        InstrumentationTestResult result = await chatClient.TestGetResponseAsync("Subtract 5 from 19");
 
         // Assert
         result.ShouldBeSuccess();
@@ -45,6 +95,7 @@ public class CalculatorToolTests(OllamaFixture Ollama) : IClassFixture<OllamaFix
             configureTools: (tools) =>
             {
                 // Add McpServerTools from the assembly
+                // Note: This scans the assembly for classes defining tools using the [McpServerToolType] attribute
                 tools.AddMcpServerToolsFromAssembly(toolAssembly);
             });
         return chatClient;

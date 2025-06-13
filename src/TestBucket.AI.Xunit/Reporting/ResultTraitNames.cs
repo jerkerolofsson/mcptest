@@ -1,5 +1,4 @@
-﻿
-namespace TestBucket.AI.Xunit.Instrumentation;
+﻿namespace TestBucket.AI.Xunit.Reporting;
 public static class ResultTraitNames
 {
     public static string AIModelName = nameof(AIModelName);

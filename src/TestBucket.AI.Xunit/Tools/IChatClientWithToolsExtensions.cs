@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.AI;
 
 using TestBucket.AI.Xunit.Instrumentation;
+using TestBucket.AI.Xunit.Reporting;
 
 namespace TestBucket.AI.Xunit.Tools;
 
@@ -9,6 +10,15 @@ namespace TestBucket.AI.Xunit.Tools;
 /// </summary>
 public static class IChatClientWithToolsExtensions
 {
+    public static async Task<InstrumentationTestResult> TestGetResponseAsync(
+    this IChatClient chatClient,
+    string chatMessage,
+    Action<ChatOptions>? configureOptions = null)
+    {
+        var message = new ChatMessage(ChatRole.User, chatMessage);
+        return await TestGetResponseAsync(chatClient, [message], configureOptions, true, TestContext.Current.CancellationToken);
+    }
+
     /// <summary>
     /// Gets a response from the chat client using the provided chat messages and tools.
     /// The tools are specified as a list of MethodInfo, which allows for easy integration with MCP server tools.
@@ -20,9 +30,10 @@ public static class IChatClientWithToolsExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static async Task<InstrumentationTestResult> TestGetResponseAsync(
-        this IChatClient chatClient, 
-        IEnumerable<ChatMessage> chatMessages, 
+        this IChatClient chatClient,
+        IEnumerable<ChatMessage> chatMessages,
         Action<ChatOptions>? configureOptions = null,
+        bool addToReport = true,
         CancellationToken cancellationToken = default)
     {
         ChatOptions options = new ChatOptions();
@@ -42,8 +53,11 @@ public static class IChatClientWithToolsExtensions
         var chatResponse = await chatClient.GetResponseAsync(chatMessages, options, cancellationToken);
         var result = chatClient.GetRequiredService<InstrumentationTestResult>();
 
-        // Add to the xunit report
-        TestContext.Current.AttachInstrumentationTestResult(result);
+        if (addToReport)
+        {
+            // Add to the xunit report
+            TestContext.Current.AttachInstrumentationTestResult(result);
+        }
 
         return result;
 

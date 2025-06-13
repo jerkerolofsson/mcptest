@@ -15,9 +15,10 @@ public static class InstrumentationTestResultExtensions
     /// <param name="testResult"></param>
     /// <param name="toolName"></param>
     /// <param name="times"></param>
-    public static void ContainsFunctionCall(this InstrumentationTestResult testResult, string toolName, int times=1)
+    public static ToolInstrumentationTestResult ContainsFunctionCall(this InstrumentationTestResult testResult, string toolName, int times=1)
     {
-        var count = testResult.FunctionCalls.Count(f => f.Name == toolName);
+        var functionCalls = testResult.FunctionCalls.Where(f => f.Name == toolName).ToList();
+        var count = functionCalls.Count;
         if (count == 0)
         {
             Assert.Fail($"Tool '{toolName}' was not invoked during the test run.");
@@ -26,7 +27,9 @@ public static class InstrumentationTestResultExtensions
         {
             Assert.Fail($"Tool '{toolName}' was invoked {count} times, expected {times} times.");
         }
+        return new ToolInstrumentationTestResult(functionCalls, testResult);
     }
+
 
     /// <summary>
     /// Verifies that the <see cref="InstrumentationTestResult"/> indicates a successful test run.

@@ -9,12 +9,16 @@ using TestBucket.AI.Xunit.Tools;
 
 namespace TestBucket.AI.OllamaIntegrationTests;
 
+/// <summary>
+/// Tests using a ModelContextProtocol tool that requires injected services
+/// </summary>
+/// <param name="Ollama"></param>
 [EnrichedTest]
 [IntegrationTest]
 public class ModelContextProtocolDependencyInjectionTests(OllamaFixture Ollama) : IClassFixture<OllamaFixture>
 {
     /// <summary>
-    /// Verifies that the correct tool is invoked when multiple tools are available
+    /// Verifies that the Add tool is invoked when multiple tools are available
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -23,11 +27,10 @@ public class ModelContextProtocolDependencyInjectionTests(OllamaFixture Ollama) 
     public async Task CallAddTool_WithCalculatorMcpToolFromAssembly_CorrectToolIsInvoked(string model)
     {
         // Arrange
-        IChatClient chatClient = await CreateInstrumentedChatClientAsync(model);
+        IChatClient chatClient = await CalculatorUtils.CreateInstrumentedChatClientAsync(Ollama, model);
 
         // Act
-        var message = new ChatMessage(ChatRole.User, "Add 3 and 6");
-        var result = await chatClient.TestGetResponseAsync([message], cancellationToken: TestContext.Current.CancellationToken);
+        var result = await chatClient.TestGetResponseAsync("Add 3 and 6");
 
         // Assert
         result.ShouldBeSuccess();
@@ -35,7 +38,7 @@ public class ModelContextProtocolDependencyInjectionTests(OllamaFixture Ollama) 
     }
 
     /// <summary>
-    /// Verifies that the correct tool is invoked when multiple tools are available
+    /// Verifies that the Subtract tool is invoked when multiple tools are available
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -44,31 +47,17 @@ public class ModelContextProtocolDependencyInjectionTests(OllamaFixture Ollama) 
     public async Task CallSubtractTool_WithCalculatorMcpToolFromAssembly_CorrectToolIsInvoked(string model)
     {
         // Arrange
-        IChatClient chatClient = await CreateInstrumentedChatClientAsync(model);
+        IChatClient chatClient = await CalculatorUtils.CreateInstrumentedChatClientAsync(Ollama, model);
 
         // Act
-        var message = new ChatMessage(ChatRole.User, "Subtract 5 from 19");
-        var result = await chatClient.TestGetResponseAsync([message], cancellationToken: TestContext.Current.CancellationToken);
+        var result = await chatClient.TestGetResponseAsync("Subtract 5 from 19");
 
         // Assert
         result.ShouldBeSuccess();
-        result.ContainsFunctionCall("Subtract", 1);
+        result.ContainsFunctionCall("Subtract", 1)
+            .WithArgument("a", 19)
+            .WithArgument("b", 5);
     }
 
-
-    private async Task<IChatClient> CreateInstrumentedChatClientAsync(string model)
-    {
-        var toolAssembly = typeof(CalculatorMcp).Assembly;
-        var chatClient = await Ollama.CreateChatClientAsync(model,
-            configureServices: (services) =>
-            {
-                services.AddSingleton<ICalculator, Calculator>();
-            },
-            configureTools: (tools) =>
-            {
-                tools.AddMcpServerToolsFromAssembly(toolAssembly);
-            });
-        return chatClient;
-    }
 
 }

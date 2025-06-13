@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.AI;
 
+using TestBucket.AI.Xunit.Instrumentation;
 using TestBucket.Traits.Core.Metrics;
 using TestBucket.Traits.Xunit;
 
-namespace TestBucket.AI.Xunit.Instrumentation;
+namespace TestBucket.AI.Xunit.Reporting;
 
 /// <summary>
 /// Augments metrics and other details to the TestContext as attachments so it is included in the xml reports
@@ -51,7 +52,7 @@ internal static class TestContextResultWriter
         }
     }
 
-    private static string ConvertAIMessagesToText(IEnumerable<AIContent> messageContent)
+    internal static string ConvertAIMessagesToText(IEnumerable<AIContent> messageContent)
     {
         var stringBuilder = new StringBuilder();
 
