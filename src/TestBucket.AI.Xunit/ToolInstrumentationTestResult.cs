@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,7 +45,25 @@ public record class ToolInstrumentationTestResult
             }
             if(expectedValue is not null && !expectedValue.Equals(argumentValue))
             {
-                Assert.Fail($"Expected the call to '{functionCall.Name}' have '{argumentName}'='{expectedValue}' but expected it was '{argumentValue}'");
+                if(argumentValue is null)
+                {
+                    Assert.Fail($"Expected the call to '{functionCall.Name}' have '{argumentName}'='{expectedValue}' but expected it was null");
+                }
+
+                // If it failed because the types are different, and the provided
+                // argument is a string, try to convert it to the expected type.
+                var providedArgumentType = argumentValue.GetType();
+                var expectedArgumentType = expectedValue.GetType(); 
+                if (providedArgumentType == typeof(string) && expectedArgumentType != providedArgumentType)
+                {
+                    // Convert the string to the expected type
+                    argumentValue = Convert.ChangeType(argumentValue, expectedArgumentType, CultureInfo.InvariantCulture);
+                }
+
+                if (!expectedValue.Equals(argumentValue))
+                {
+                    Assert.Fail($"Expected the call to '{functionCall.Name}' have '{argumentName}'='{expectedValue}' but expected it was '{argumentValue}'");
+                }
             }
         }
         return this;

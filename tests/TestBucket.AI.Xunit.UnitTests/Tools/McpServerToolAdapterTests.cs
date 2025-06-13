@@ -5,7 +5,7 @@ using System.Text.Json;
 
 using TestBucket.AI.Xunit.Tools;
 
-namespace TestBucket.AI.Xunit.UnitTests
+namespace TestBucket.AI.Xunit.UnitTests.Tools
 {
     /// <summary>
     /// Contains unit tests for the <see cref="McpServerToolAdapter"/> class.
@@ -13,6 +13,7 @@ namespace TestBucket.AI.Xunit.UnitTests
     [UnitTest]
     [EnrichedTest]
     [FunctionalTest]
+    [Feature("Tools")]
     [Component("McpServerToolAdapter")]
     public class McpServerToolAdapterTests
     {

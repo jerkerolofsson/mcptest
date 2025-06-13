@@ -134,5 +134,16 @@ namespace TestBucket.AI.Xunit.Instrumentation
                 _textContent.Add(textContent);
             }
         }
+
+        internal void Clear()
+        {
+            _functionCalls.Clear();
+            _requestMessages.Clear();
+            _exceptions.Clear();
+            _activities.Clear();
+            OutputTokenCount = 0;
+            InputTokenCount = 0;
+            TotalTokenCount = 0;
+        }
     }
 }

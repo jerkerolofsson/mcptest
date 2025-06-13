@@ -4,7 +4,7 @@ using Microsoft.Extensions.AI;
 
 using TestBucket.AI.Xunit.Instrumentation;
 
-namespace TestBucket.AI.Xunit.UnitTests;
+namespace TestBucket.AI.Xunit.UnitTests.Instrumentation;
 
 /// <summary>
 /// Tests for InstrumentationChatClientFactory
@@ -12,6 +12,7 @@ namespace TestBucket.AI.Xunit.UnitTests;
 [UnitTest]
 [EnrichedTest]
 [FunctionalTest]
+[Feature("Instrumentation")]
 [Component("InstrumentationChatClientFactory")]
 public class InstrumentationChatClientFactoryTests
 {

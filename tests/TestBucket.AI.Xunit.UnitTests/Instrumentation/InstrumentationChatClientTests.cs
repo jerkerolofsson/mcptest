@@ -1,4 +1,4 @@
-﻿namespace TestBucket.AI.Xunit.UnitTests;
+﻿namespace TestBucket.AI.Xunit.UnitTests.Instrumentation;
 
 
 /// <summary>
@@ -7,6 +7,7 @@
 [UnitTest]
 [EnrichedTest]
 [FunctionalTest]
+[Feature("Instrumentation")]
 [Component("InstrumentationChatClient")]
 public class InstrumentationChatClientTests
 {

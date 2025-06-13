@@ -84,20 +84,24 @@ public static class BenchmarkingExtensions
         BenchmarkResult benchmarkResult,
         CancellationToken cancellationToken)
     {
+        // InstrumentationTestResult is singleton, so we need to reset it
+        var iterationResult = chatClient.GetRequiredService<InstrumentationTestResult>();
+        iterationResult.Clear();
+
         var resultBuilder = new BenchmarkResultBuilder(benchmarkResult);
         resultBuilder.OnStart();
         try
         {
-            var result = await chatClient.TestGetResponseAsync(chatMessages, parameters.ConfigureOptions, addToReport: false, cancellationToken);
+            iterationResult = await chatClient.TestGetResponseAsync(chatMessages, parameters.ConfigureOptions, addToReport: false, cancellationToken);
 
-            resultBuilder.OnInstrumentationTestResult(result);
+            resultBuilder.OnInstrumentationTestResult(iterationResult);
 
             try
             {
                 // Callback to the test to let them verify the result for each iteration
                 if (verifier is not null)
                 {
-                    verifier(result);
+                    verifier(iterationResult);
                 }
                 resultBuilder.OnSuccess();
             }

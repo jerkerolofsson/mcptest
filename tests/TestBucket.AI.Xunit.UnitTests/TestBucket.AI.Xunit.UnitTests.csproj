@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\TestBucket.AI.Xunit\TestBucket.AI.Xunit.csproj" />
+	  <ProjectReference Include="..\McpCalculator\McpCalculator.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -72,6 +72,13 @@ internal class ToolConfigurator : IToolConfigurator
         {
             throw new ArgumentException($"Expected {nameof(toolType)} to be a class");
         }
+
+        var toolTypeAttribute = toolType.GetCustomAttribute<McpServerToolTypeAttribute>();
+        if(toolTypeAttribute is null)
+        {
+            return;
+        }
+
         if (Services is null)
         {
             throw new InvalidOperationException("Services is not initialized");

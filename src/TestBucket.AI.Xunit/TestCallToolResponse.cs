@@ -28,7 +28,10 @@ public class TestCallToolResponse
     /// </summary>
     public void ShouldBeSuccess()
     {
-        Assert.False(this.CallToolResponse.IsError, "CallToolResponse.IsError is true");
+        if (this.CallToolResponse.IsError)
+        {
+            Assert.Fail("CallToolResponse.IsError is true");
+        }
     }
 
     /// <summary>
