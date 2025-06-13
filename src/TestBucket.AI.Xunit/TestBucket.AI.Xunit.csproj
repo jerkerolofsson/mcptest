@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>TestBucket.AI.Xunit.UnitTests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Extensions\**" />
+		<EmbeddedResource Remove="Extensions\**" />
+		<None Remove="Extensions\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+        <PackageReference Include="TestBucket.Traits.Xunit" Version="1.0.3" />
+		<PackageReference Include="Microsoft.Extensions.AI" Version="9.6.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+		<PackageReference Include="ModelContextProtocol.Core" Version="0.2.0-preview.3" />
+		<PackageReference Include="xunit.v3.assert" Version="2.0.3" />
+		<PackageReference Include="xunit.v3.extensibility.core" Version="2.0.3" />
+				<PackageReference Include="Testcontainers.Ollama" Version="4.5.0" />
+		<PackageReference Include="OllamaSharp" Version="5.2.2" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<Description>MCP (Model Context Protocol) test framework for writing xunit tests that target MCP servers or AIFunction/tool calling IChatClient</Description>
+		<Title>TestBucket.AI.Xunit</Title>
+		<Authors>Jerker Olofsson</Authors>
+		<Company>Jerker Olofsson</Company>
+		<PackageId>TestBucket.AI.Xunit</PackageId>
+		<WebPage>https://github.com/jerkerolofsson/mcptest/README.md</WebPage>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Benchmarking\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Using Include="Testcontainers.Ollama" />
+		<Using Include="OllamaSharp" />
+	</ItemGroup>
+</Project>
