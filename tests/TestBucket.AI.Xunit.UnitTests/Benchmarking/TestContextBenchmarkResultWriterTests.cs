@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.Extensions.AI;
+﻿using Microsoft.Extensions.AI;
 
 using TestBucket.AI.Xunit.Benchmarking;
 using TestBucket.AI.Xunit.Instrumentation;
 using TestBucket.AI.Xunit.Reporting;
 using TestBucket.Traits.Core.Metrics;
-using TestBucket.Traits.Xunit;
 
-using Xunit;
 using Xunit.Sdk;
 
 namespace TestBucket.AI.Xunit.UnitTests.Benchmarking;

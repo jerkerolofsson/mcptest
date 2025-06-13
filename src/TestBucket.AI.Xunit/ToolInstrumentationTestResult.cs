@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.AI;
@@ -54,7 +55,22 @@ public record class ToolInstrumentationTestResult
                 // argument is a string, try to convert it to the expected type.
                 var providedArgumentType = argumentValue.GetType();
                 var expectedArgumentType = expectedValue.GetType(); 
-                if (providedArgumentType == typeof(string) && expectedArgumentType != providedArgumentType)
+                if(expectedArgumentType != typeof(JsonElement) && argumentValue is JsonElement jsonElement)
+                {
+                    if (expectedArgumentType.IsValueType)
+                    {
+                        try
+                        {
+                            argumentValue = JsonSerializer.Deserialize(jsonElement.GetRawText(), expectedArgumentType);
+                        }
+                        catch
+                        {
+                            // It is up to the user to provide a comparable type for complex objects that cannot be deserialized..
+                        }
+                    }
+                }
+
+                if (expectedArgumentType.IsValueType && expectedArgumentType != providedArgumentType)
                 {
                     // Convert the string to the expected type
                     argumentValue = Convert.ChangeType(argumentValue, expectedArgumentType, CultureInfo.InvariantCulture);
