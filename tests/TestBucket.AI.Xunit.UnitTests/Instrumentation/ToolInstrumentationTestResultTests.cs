@@ -12,7 +12,7 @@ namespace TestBucket.AI.Xunit.UnitTests.Instrumentation;
 /// </summary>
 [UnitTest]
 [Feature("Instrumentation")]
-[Component("ToolInstrumentationTestResult")]
+[Component("Instrumentation")]
 [EnrichedTest]
 [FunctionalTest]
 public class ToolInstrumentationTestResultTests

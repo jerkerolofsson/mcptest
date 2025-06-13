@@ -1,0 +1,81 @@
+systems:
+  Nuget Packages:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\**\*.*
+components:
+  Instrumentation:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\Instrumentation\**\*.*
+  Benchmarking:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\Benchmarking\**\*.*
+  Ollama:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\Ollama\**\*.*
+  Reporting:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\Reporting\**\*.*
+  Tools:
+    display: 
+    description: Tools / AI Functions
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\tools\**\*.*
+layers:
+  TestBucket.AI.Xunit:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\**\*.*
+features:
+  Benchmarking:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\Benchmarking\**\*.*
+  Instrumentation:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\Instrumentation\**\*.*
+  Reporting:
+    display: 
+    description: 
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\Reporting\**\*.*
+  Tools:
+    display: 
+    description: Tools / AI Functions
+    dev_lead: 
+    test_lead: 
+    paths:
+    - src\tools\**\*.*

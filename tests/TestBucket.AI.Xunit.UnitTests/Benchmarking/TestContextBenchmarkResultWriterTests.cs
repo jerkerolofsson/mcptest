@@ -22,7 +22,7 @@ namespace TestBucket.AI.Xunit.UnitTests.Benchmarking;
 [EnrichedTest]
 [FunctionalTest]
 [Feature("Benchmarking")]
-[Component("TestContextBenchmarkResultWriter")]
+[Component("Benchmarking")]
 public class TestContextBenchmarkResultWriterTests
 {
     /// <summary>

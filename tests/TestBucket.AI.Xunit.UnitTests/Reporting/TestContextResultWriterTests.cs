@@ -13,7 +13,7 @@ namespace TestBucket.AI.Xunit.UnitTests.Reporting;
 [UnitTest]
 [EnrichedTest]
 [FunctionalTest]
-[Component("TestContextResultWriter")]
+[Component("Reporting")]
 [Feature("Reporting")]
 public class TestContextResultWriterTests
 {

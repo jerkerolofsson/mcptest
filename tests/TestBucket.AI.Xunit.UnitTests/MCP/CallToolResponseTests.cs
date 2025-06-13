@@ -16,7 +16,7 @@ namespace TestBucket.AI.Xunit.UnitTests.MCP;
 [EnrichedTest]
 [FunctionalTest]
 [Feature("MCP")]
-[Component("CallToolResponse")]
+[Component("MCP")]
 public class CallToolResponseTests
 {
     private Content SomeContent => new Content() {  Text = "Hello, MCP world!" };

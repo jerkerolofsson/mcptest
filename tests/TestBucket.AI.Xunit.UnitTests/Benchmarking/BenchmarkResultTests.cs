@@ -15,7 +15,7 @@ namespace TestBucket.AI.Xunit.UnitTests.Benchmarking;
 [EnrichedTest]
 [FunctionalTest]
 [Feature("Benchmarking")]
-[Component("BenchmarkResult")]
+[Component("Benchmarking")]
 public class BenchmarkResultTests
 {
     /// <summary>

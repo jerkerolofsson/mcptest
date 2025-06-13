@@ -8,7 +8,7 @@
 [EnrichedTest]
 [FunctionalTest]
 [Feature("Instrumentation")]
-[Component("InstrumentationChatClient")]
+[Component("Instrumentation")]
 public class InstrumentationChatClientTests
 {
 }
