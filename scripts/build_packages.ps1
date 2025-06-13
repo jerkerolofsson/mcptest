@@ -1,4 +1,4 @@
-$version="0.0.3"
+$version="0.0.4"
 
 $package="TestBucket.AI.Xunit"
 cd src/${package}
