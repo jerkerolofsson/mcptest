@@ -15,7 +15,7 @@ namespace TestBucket.AI.OllamaIntegrationTests;
 /// <param name="Ollama"></param>
 [EnrichedTest]
 [IntegrationTest]
-public class ModelContextProtocolDependencyInjectionTests(OllamaFixture Ollama) : IClassFixture<OllamaFixture>
+public class ModelContextProtocolDependencyInjectionTests(OllamaFixture Ollama)
 {
     /// <summary>
     /// Verifies that the Add tool is invoked when multiple tools are available

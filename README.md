@@ -26,11 +26,7 @@ foreach (string model in new string[] { "llama3.1:8b", "mistral-nemo:12b" })
     });
 
     // Write summary
-    TestContext.Current.TestOutputHelper?.WriteLine("Model: {ModelName}, Passrate={Passrate} ({IterationsPassed}/{IterationsStarted})", 
-        model, 
-        benchmarkResult.Passrate, // 0.0 - 100.0
-        benchmarkResult.IterationsPassed,
-        benchmarkResult.IterationsStarted);
+    TestContext.Current.TestOutputHelper?.WriteLine($"Model: {model}, Passrate={benchmarkResult.Passrate}");
 
     // Write exceptions
     foreach(var exception in benchmarkResult.Exceptions)
@@ -80,7 +76,9 @@ public class CalculatorToolTests(OllamaFixture Ollama) : IClassFixture<OllamaFix
 
         // Assert
         result.ShouldBeSuccess();
-        result.ContainsFunctionCall("Subtract", 1);
+        result.ContainsFunctionCall("Subtract", 1)
+            .WithArgument("a", 19)
+            .WithArgument("b", 5);
     }
 
     private async Task<IChatClient> CreateInstrumentedChatClientAsync(string model)

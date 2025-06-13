@@ -16,7 +16,7 @@ namespace TestBucket.McpTests.OllamaIntegrationTests
     /// <param name="Ollama"></param>
     [EnrichedTest]
     [IntegrationTest]
-    public class Llama3ToolInstrumentationTests(OllamaFixture Ollama) : IClassFixture<OllamaFixture>
+    public class Llama3ToolInstrumentationTests(OllamaFixture Ollama) 
     {
         /// <summary>
         /// Verifies that the correct tool is invoked when multiple tools are available

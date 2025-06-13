@@ -14,8 +14,9 @@ namespace TestBucket.AI.OllamaIntegrationTests;
 
 [EnrichedTest]
 [IntegrationTest]
-public class BenchmarkingTests(OllamaFixture Ollama) : IClassFixture<OllamaFixture>
+public class BenchmarkingTests(OllamaFixture Ollama)
 {
+
     /// <summary>
     /// Benchmarks two different models
     /// </summary>
@@ -33,9 +34,7 @@ public class BenchmarkingTests(OllamaFixture Ollama) : IClassFixture<OllamaFixtu
             });
 
             // Write summary
-            TestContext.Current.TestOutputHelper?.WriteLine("Model: {ModelName}, Passrate={Passrate}", 
-                model, 
-                benchmarkResult.Passrate);
+            TestContext.Current.TestOutputHelper?.WriteLine($"Model: {model}, Passrate={benchmarkResult.Passrate}");
 
             // Write exceptions
             foreach(var exception in benchmarkResult.Exceptions)
