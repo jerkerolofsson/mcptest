@@ -12,6 +12,21 @@ namespace TestBucket.AI.Xunit.Instrumentation
         private readonly List<TextContent> _textContent = [];
         private readonly List<ChatMessage> _requestMessages = [];
 
+        /// <summary>
+        /// Provide name (e.g. ollama)
+        /// </summary>
+        public string? ProviderName { get; set; }
+
+        /// <summary>
+        /// Version
+        /// </summary>
+        public string ProviderVersion { get; set; }
+
+        /// <summary>
+        /// Name of model used
+        /// </summary>
+        public string? ModelName { get; set; }
+
         public long? OutputTokenCount { get; set; }
         public long? InputTokenCount { get; set; }
         public long? TotalTokenCount { get; set; }
@@ -21,6 +36,7 @@ namespace TestBucket.AI.Xunit.Instrumentation
         public IReadOnlyList<Exception> FunctionCallExceptions => _exceptions.AsReadOnly();
         public IReadOnlyList<ChatMessage> RequestMessages => _requestMessages.AsReadOnly();
 
+        
         internal void AddActivity(Activity activity)
         {
             if (activity is not null)

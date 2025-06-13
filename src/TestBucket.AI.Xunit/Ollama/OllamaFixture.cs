@@ -31,7 +31,15 @@ namespace TestBucket.AI.Xunit.Ollama
             _ollamaClient ??= new OllamaApiClient(OllamaUrl, modelName);
             await PullModelAsync(modelName);
 
-            return InstrumentationChatClientFactory.Create(_ollamaClient, configureServices, configureTools);
+            var client = InstrumentationChatClientFactory.Create(_ollamaClient, configureServices, configureTools);
+
+            // Set the mode name for logging
+            var result = client.GetRequiredService<InstrumentationTestResult>();
+            result.ModelName = modelName;
+            result.ProviderName = "ollama";
+            result.ProviderVersion = await _ollamaClient.GetVersionAsync(TestContext.Current.CancellationToken);
+
+            return client;
         }
 
         private async ValueTask PullModelAsync(string modelName)

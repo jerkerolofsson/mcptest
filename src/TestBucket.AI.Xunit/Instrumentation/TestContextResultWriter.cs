@@ -17,24 +17,37 @@ namespace TestBucket.AI.Xunit.Instrumentation;
 /// </summary>
 internal static class TestContextResultWriter
 {
-    private const string MeterName = "TestBucket.AI.Xunit.Instrumentation";
+    private const string MeterName = "testbucket.ai";
 
     public static void AttachInstrumentationTestResult(this ITestContext testContext, InstrumentationTestResult result)
     {
         var userMessages = result.RequestMessages.Where(x => x.Role == ChatRole.User).SelectMany(x=>x.Contents);
-        testContext.AddAttachmentIfNotExists(ResultTraitNames.LlmUserPrompt, ConvertAIMessagesToText(userMessages));
+        testContext.AddAttachmentIfNotExists(ResultTraitNames.AIUserPrompt, ConvertAIMessagesToText(userMessages));
+
+        if (result.ModelName is not null)
+        {
+            testContext.AddAttachmentIfNotExists(ResultTraitNames.AIModelName, result.ModelName);
+        }
+        if (result.ProviderName is not null)
+        {
+            testContext.AddAttachmentIfNotExists(ResultTraitNames.AIProviderName, result.ProviderName);
+        }
+        if (result.ProviderVersion is not null)
+        {
+            testContext.AddAttachmentIfNotExists(ResultTraitNames.AIProviderVersion, result.ProviderVersion);
+        }
 
         if (result.InputTokenCount is not null)
         {
-            testContext.AddMetric(new TestResultMetric(MeterName, "input-token-count", result.InputTokenCount.Value, "tokens"));
+            testContext.AddMetric(new TestResultMetric(MeterName, "input_token_count", result.InputTokenCount.Value, "tokens"));
         }
         if (result.OutputTokenCount is not null)
         {
-            testContext.AddMetric(new TestResultMetric(MeterName, "output-token-count", result.OutputTokenCount.Value, "tokens"));
+            testContext.AddMetric(new TestResultMetric(MeterName, "output_token_count", result.OutputTokenCount.Value, "tokens"));
         }
         if (result.TotalTokenCount is not null)
         {
-            testContext.AddMetric(new TestResultMetric(MeterName, "total-token-count", result.TotalTokenCount.Value, "tokens"));
+            testContext.AddMetric(new TestResultMetric(MeterName, "total_token_count", result.TotalTokenCount.Value, "tokens"));
         }
     }
 
@@ -44,10 +57,17 @@ internal static class TestContextResultWriter
 
         foreach (var content in messageContent)
         {
-            var raw = content.RawRepresentation?.ToString();
-            if (raw is not null)
+            if(content is TextContent textContent)
             {
-                stringBuilder.AppendLine(raw);
+                stringBuilder.Append(textContent.Text);
+            }
+            else
+            {
+                var raw = content.RawRepresentation?.ToString();
+                if (raw is not null)
+                {
+                    stringBuilder.Append(raw);
+                }
             }
         }
 

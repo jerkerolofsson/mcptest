@@ -1,48 +1,133 @@
 # MCP test extensions for xunit v3
 
-The `TestBucket.McpTest.Xunit` package provides helpers for writing integration tests against Model Context Protocol (MCP) servers using xUnit v3. It is designed to work with the `IMcpClient` interface and the `McpClientFactory` from the `ModelContextProtocol` library.
+The `TestBucket.McpTest.Xunit` package provides helpers for writing integration tests related to IChatClient and Model Context Protocol (MCP) servers using xUnit v3. 
 
 ## Getting Started
 
-1. **Add Package Reference**
+Add Package Reference
 
-   Ensure your test project references the following NuGet packages:
-   - `TestBucket.McpTest.Xunit`
-   - `ModelContextProtocol.Core`
-   - `xunit.v3.assert`
-   - `xunit.v3.extensibility.core`
+- Ensure your test project references the following NuGet package: `TestBucket.AI.Xunit`
 
-2. **Create an MCP Client**
+## Verifying that the correct tool is called from a user-prompt
 
-   Use `McpClientFactory` to create an `IMcpClient` instance. Typically, you will need to provide a transport (e.g., `SseClientTransport`) and authentication headers (if needed).
-
-## Example
+> This example uses OllamaFixture to create an Ollama test container (using Testcontainers.Ollama)
 
 ```csharp
-    [Fact]
-    public async Task Should_Invoke_MyTool_Successfully()
+[EnrichedTest]
+[IntegrationTest]
+public class CalculatorToolTests(OllamaFixture Ollama) : IClassFixture<OllamaFixture>
+{ 
+    [Theory]
+    [InlineData("llama3.1:8b")]
+    public async Task CallSubtractTool_WithSimplePrompt_CorrectToolIsInvoked(string model)
     {
-        // Arrange: create your IMcpClient (using your factory or fixture)
-        IMcpClient client = /* get or create your client, e.g. from a fixture */;
+        // Arrange
+        IChatClient chatClient = await CreateInstrumentedChatClientAsync(model);
 
-        // Tool name and arguments
-        string toolName = "myTool";
-        var arguments = new Dictionary<string, object?>
-        {
-            { "param1", "value1" },
-            { "param2", 42 }
-        };
+        // Act
+        var message = new ChatMessage(ChatRole.User, "Subtract 5 from 19");
+        var result = await chatClient.TestGetResponseAsync([message], cancellationToken: TestContext.Current.CancellationToken);
 
-        // Act: call the tool
-        var response = await client.TestCallToolAsync(
-            toolName,
-            arguments,
-            progress: null, // or provide a progress reporter if needed
-            jsonSerializerOptions: new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-        );
-
-        // Assert: check the response
-        response.ShouldBeSuccess();
-        response.ShouldHaveContent();
+        // Assert
+        result.ShouldBeSuccess();
+        result.ContainsFunctionCall("Subtract", 1);
     }
+
+    private async Task<IChatClient> CreateInstrumentedChatClientAsync(string model)
+    {
+        var toolAssembly = typeof(CalculatorMcp).Assembly;
+        var chatClient = await Ollama.CreateChatClientAsync(model,
+            configureServices: (services) =>
+            {
+                // Add any services required by the tools
+                services.AddSingleton<ICalculator, Calculator>();
+            },
+            configureTools: (tools) =>
+            {
+                // Add McpServerTools from the assembly
+                tools.AddMcpServerToolsFromAssembly(toolAssembly);
+            });
+        return chatClient;
+    }
+}
+```
+
+## Rich reports
+
+When generating unit test reports, the `TestBucket.McpTest.Xunit` package provides additional details and metrics.
+
+### Example of xunit xml report
+
+```xml
+<attachments>
+    <attachment name="AIUserPrompt">
+        <![CDATA[ Add 3 and 6 ]]>
+    </attachment>
+    <attachment name="AIModelName">
+        <![CDATA[ llama3.1:8b ]]>
+    </attachment>
+    <attachment name="AIProviderName">
+        <![CDATA[ ollama ]]>
+    </attachment>
+    <attachment name="AIProviderVersion">
+        <![CDATA[ 0.6.6 ]]>
+    </attachment>
+    <attachment name="metric:testbucket.ai:input_token_count">
+        <![CDATA[ 325tokens@1749786387459 ]]>
+    </attachment>
+    <attachment name="metric:testbucket.ai:output_token_count">
+        <![CDATA[ 36tokens@1749786387464 ]]>
+    </attachment>
+    <attachment name="metric:testbucket.ai:total_token_count">
+        <![CDATA[ 361tokens@1749786387464 ]]>
+    </attachment>
+    <attachment name="metric:xunit:test-duration">
+        <![CDATA[ 35715.1986ms@1749786387472 ]]>
+    </attachment>
+    <attachment name="TestDescription">
+        <![CDATA[ # TestBucket.McpTests.OllamaIntegrationTests.Llama3ToolInstrumentationTests.CallAddTool_WithTwoTools_CorrectToolIsInvoked(System.String) ## Summary Verifies that the correct tool is invoked when multiple tools are available ## Source | Assembly | Class | Method | | -------- | ----- | ------ | | TestBucket.AI.OllamaIntegrationTests | TestBucket.McpTests.OllamaIntegrationTests.Llama3ToolInstrumentationTests | CallAddTool_WithTwoTools_CorrectToolIsInvoked | ### Parameters | Name | Summary | | -------- | ------------------- | | model | | ]]>
+    </attachment>
+</attachments>
+```
+
+> Note: Test description is extracted from the xmldoc, and requires setting GenerateDocumentationFile to true in the .csproj file.
+```xml
+<PropertyGroup>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+</PropertyGroup>
+```
+
+## Testing an MCP server
+
+It is designed to work with the `IMcpClient` interface and the `McpClientFactory` from the `ModelContextProtocol` library.
+
+Use `McpClientFactory` to create an `IMcpClient` instance. Typically, you will need to provide a transport (e.g., `SseClientTransport`) and authentication headers (if needed).
+
+### Example
+
+```csharp
+[Fact]
+public async Task Should_Invoke_MyTool_Successfully()
+{
+    // Arrange: create your IMcpClient (using your factory or fixture)
+    IMcpClient client = /* get or create your client, e.g. from a fixture */;
+
+    // Tool name and arguments
+    string toolName = "myTool";
+    var arguments = new Dictionary<string, object?>
+    {
+        { "param1", "value1" },
+        { "param2", 42 }
+    };
+
+    // Call the tool
+    var response = await client.TestCallToolAsync(
+        toolName,
+        arguments
+    );
+
+    // Assert: check the response
+    response.ShouldBeSuccess();
+    response.ShouldHaveContent();
+}
 ```

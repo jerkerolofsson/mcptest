@@ -2,6 +2,10 @@
 namespace TestBucket.AI.Xunit.Instrumentation;
 public static class ResultTraitNames
 {
-    public static string LlmUserPrompt = nameof(LlmUserPrompt);
-    public static string LlmConversation = nameof(LlmConversation);
+    public static string AIModelName = nameof(AIModelName);
+    public static string AIProviderName = nameof(AIProviderName);
+    public static string AIProviderVersion = nameof(AIProviderVersion);
+
+    public static string AIUserPrompt = nameof(AIUserPrompt);
+    public static string AIConversation = nameof(AIConversation);
 }

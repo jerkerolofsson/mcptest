@@ -11,7 +11,7 @@ namespace TestBucket.AI.OllamaIntegrationTests;
 
 [EnrichedTest]
 [IntegrationTest]
-public class ModelContextProtocolDepdencyInjectionTests(OllamaFixture Ollama) : IClassFixture<OllamaFixture>
+public class ModelContextProtocolDependencyInjectionTests(OllamaFixture Ollama) : IClassFixture<OllamaFixture>
 {
     /// <summary>
     /// Verifies that the correct tool is invoked when multiple tools are available
@@ -45,7 +45,6 @@ public class ModelContextProtocolDepdencyInjectionTests(OllamaFixture Ollama) : 
     {
         // Arrange
         IChatClient chatClient = await CreateInstrumentedChatClientAsync(model);
-
 
         // Act
         var message = new ChatMessage(ChatRole.User, "Subtract 5 from 19");
