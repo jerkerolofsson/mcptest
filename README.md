@@ -13,7 +13,7 @@ Add Package Reference
 To benchmark models, you can use the `TestBucket.McpTest.Xunit` package to create tests that measure the performance of different models. 
 The package provides a way to instrument calls to models and record metrics such as the accuracy invoking the correct tools with the correct arguments.
 
-### Benchmarking example without verification of result
+### Benchmarking example with verification of tool invokation result
 
 ```csharp
 foreach (string model in new string[] { "llama3.1:8b", "mistral-nemo:12b" })
@@ -37,6 +37,8 @@ foreach (string model in new string[] { "llama3.1:8b", "mistral-nemo:12b" })
 ```
 
 ### Benchmarking results in xunit results XML
+
+Details are added to the xunit results XML file, which can be used for further analysis, debugging or monitoring trends.
 
 ```xml
 <attachments>
@@ -148,9 +150,8 @@ When generating unit test reports, the `TestBucket.McpTest.Xunit` package provid
 
 ## Testing an MCP server
 
-It is designed to work with the `IMcpClient` interface and the `McpClientFactory` from the `ModelContextProtocol` library.
-
-Use `McpClientFactory` to create an `IMcpClient` instance. Typically, you will need to provide a transport (e.g., `SseClientTransport`) and authentication headers (if needed).
+Use `McpClientFactory` (from the official `ModelContextProtocol` library) to create an `IMcpClient` instance. 
+Typically, you will need to provide a transport (e.g., `SseClientTransport`) and authentication headers (if needed).
 
 ### Example
 

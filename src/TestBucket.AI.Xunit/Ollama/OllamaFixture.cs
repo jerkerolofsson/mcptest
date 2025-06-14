@@ -17,7 +17,7 @@ namespace TestBucket.AI.Xunit.Ollama
         /// <summary>
         /// Gets the base URL for the Ollama API running in the container.
         /// </summary>
-        public string OllamaUrl => $"http://localhost:{_ollamaContainer?.GetMappedPublicPort(11434)}";
+        public string OllamaUrl => $"http://{_ollamaContainer?.Hostname}:{_ollamaContainer?.GetMappedPublicPort(11434)}";
 
         /// <summary>
         /// Initializes the Ollama container and prepares it for use in tests.
