@@ -1,4 +1,6 @@
-﻿using ModelContextProtocol.Protocol;
+﻿using System.Text.Json;
+
+using ModelContextProtocol.Protocol;
 
 using Xunit;
 
@@ -24,6 +26,16 @@ public class TestCallToolResponse
     }
 
     /// <summary>
+    /// Asserts that the <see cref="CallToolResponse"/> indicates an error.
+    /// </summary>
+    public void ShouldBeError()
+    {
+        if (!this.CallToolResponse.IsError)
+        {
+            Assert.Fail("CallToolResponse.IsError is false and expected it to be true");
+        }
+    }
+    /// <summary>
     /// Asserts that the <see cref="CallToolResponse"/> does not indicate an error.
     /// </summary>
     public void ShouldBeSuccess()
@@ -41,4 +53,16 @@ public class TestCallToolResponse
     {
         Assert.NotEmpty(this.CallToolResponse.Content);
     }
+
+
+    /// <summary>
+    /// Asserts that the <see cref="CallToolResponse"/> contains non-empty content.
+    /// </summary>
+    public void ShouldHaveContent(Action<ToolContentResponse> content)
+    {
+        Assert.NotEmpty(this.CallToolResponse.Content);
+        content(new ToolContentResponse(this.CallToolResponse.Content));
+    }
+
+
 }

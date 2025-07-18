@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpCalculator", "tests\McpCalculator\McpCalculator.csproj", "{214CA41C-ECEA-4074-A3E3-09EA5F5897DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBucket.AI.PlaywrightMcpIntegrationTests", "tests\TestBucket.AI.PlaywrightMcpIntegrationTests\TestBucket.AI.PlaywrightMcpIntegrationTests.csproj", "{704BC500-95F6-4F84-B751-5A2595F4A9C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{214CA41C-ECEA-4074-A3E3-09EA5F5897DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{214CA41C-ECEA-4074-A3E3-09EA5F5897DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{214CA41C-ECEA-4074-A3E3-09EA5F5897DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{704BC500-95F6-4F84-B751-5A2595F4A9C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{704BC500-95F6-4F84-B751-5A2595F4A9C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{704BC500-95F6-4F84-B751-5A2595F4A9C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{704BC500-95F6-4F84-B751-5A2595F4A9C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{DD47E59B-0324-4930-8F9E-4D8A6F3A42FA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{5142E8D8-9756-4EB9-9314-72FD119B8973} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{214CA41C-ECEA-4074-A3E3-09EA5F5897DA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{704BC500-95F6-4F84-B751-5A2595F4A9C4} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0ECC980F-96DB-4D16-94DF-C73F22C8053D}

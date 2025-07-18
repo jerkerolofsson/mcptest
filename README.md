@@ -1,24 +1,63 @@
 # MCP and IChatClient test extensions for xunit v3
 
-The `TestBucket.McpTest.Xunit` package provides helpers for writing integration tests related to IChatClient and Model Context Protocol (MCP) servers using xUnit v3. 
+The `TestBucket.AI.Xunit` package provides helpers for writing integration tests related to IChatClient and Model Context Protocol (MCP) servers using xUnit v3. 
 
 ## Getting Started
 
-Add Package Reference
+### Add Package Reference
 
 - Ensure your test project references the following NuGet package: `TestBucket.AI.Xunit`
 
+## Testing an MCP server
+
+Use `McpClientFactory` (from the official `ModelContextProtocol` library) to create an `IMcpClient` instance. 
+Typically, you will need to provide a transport (e.g., `SseClientTransport`) and authentication headers (if needed).
+
+### Example
+
+```csharp
+using ModelContextProtocol.Client;
+using TestBucket.AI.Xunit;
+
+[Fact]
+public async Task ExpectedTextFoundInSuccessfulResponse_AfterInvokingNavigateTool_WithCorrectArguments()
+{
+    // Arrange
+
+    // For a complete example refer to tests/TestBucket.AI.PlaywrightMcpIntegrationTests/PlaywrightIntegrationTests.cs
+    var client = await CreatePlaywrightMcpClientAsync();
+    string url = "https://github.com/microsoft/playwright-mcp";
+    var arguments = new ToolArgumentBuilder()
+        .WithArgument("url", url)
+        .Build();
+
+    // Act: Call the tool
+    var response = await client.TestCallToolAsync("browser_navigate", arguments);
+
+    // Assert
+    response.ShouldBeSuccess();
+    response.ShouldHaveContent(content =>
+    {
+        content.ShouldContain("### Ran Playwright code");
+        content.ShouldContain($"await page.goto('{url}');");
+    });
+}
+```
+
+
 ## Benchmarking models
 
-To benchmark models, you can use the `TestBucket.McpTest.Xunit` package to create tests that measure the performance of different models. 
+To benchmark models, you can use the `TestBucket.AI.Xunit` package to create tests that measure the performance (accuracy) of different models. 
 The package provides a way to instrument calls to models and record metrics such as the accuracy invoking the correct tools with the correct arguments.
+
+> As tools are added to a product, the selection by the LLM may be impacted especially if the tools are similar. The benchmarking model can be used to validate that specific prompts result in accurate calls to the correct tool.
 
 ### Benchmarking example with verification of tool invokation result
 
 ```csharp
 foreach (string model in new string[] { "llama3.1:8b", "mistral-nemo:12b" })
 {
-    IChatClient client = ...;
+    IChatClient client = InstrumentationChatClientFactory.Create(...);
     var benchmarkResult = await client.BencharkAsync("Add 3 and 6", iterations:2, (iterationResult) =>
     {
         iterationResult.ShouldBeSuccess();
@@ -39,6 +78,10 @@ foreach (string model in new string[] { "llama3.1:8b", "mistral-nemo:12b" })
 ### Benchmarking results in xunit results XML
 
 Details are added to the xunit results XML file, which can be used for further analysis, debugging or monitoring trends.
+
+> Note that `IChatClient` should be created with both instrumentation and functional calling enabled in order to record metrics.
+If you are not using the built-in `InstrumentationChatClientFactory` class to create a `IChatClient`, refer to that implementation to setup the `IChatClient` pipeline accordingly.
+
 
 ```xml
 <attachments>
@@ -105,7 +148,7 @@ public class CalculatorToolTests(OllamaFixture Ollama) : IClassFixture<OllamaFix
 
 ## Rich reports
 
-When generating unit test reports, the `TestBucket.McpTest.Xunit` package provides additional details and metrics.
+When generating unit test reports, the `TestBucket.AI.Xunit` package provides additional details and metrics.
 
 ### Example of xunit xml report
 
@@ -146,38 +189,4 @@ When generating unit test reports, the `TestBucket.McpTest.Xunit` package provid
 <PropertyGroup>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
 </PropertyGroup>
-```
-
-## Testing an MCP server
-
-Use `McpClientFactory` (from the official `ModelContextProtocol` library) to create an `IMcpClient` instance. 
-Typically, you will need to provide a transport (e.g., `SseClientTransport`) and authentication headers (if needed).
-
-### Example
-
-```csharp
-[Fact]
-public async Task Should_Invoke_MyTool_Successfully()
-{
-    // Arrange: create your IMcpClient (using your factory or fixture)
-    IMcpClient client = /* get or create your client, e.g. from a fixture */;
-
-    // Tool name and arguments
-    string toolName = "myTool";
-    var arguments = new Dictionary<string, object?>
-    {
-        { "param1", "value1" },
-        { "param2", 42 }
-    };
-
-    // Call the tool
-    var response = await client.TestCallToolAsync(
-        toolName,
-        arguments
-    );
-
-    // Assert: check the response
-    response.ShouldBeSuccess();
-    response.ShouldHaveContent();
-}
 ```
